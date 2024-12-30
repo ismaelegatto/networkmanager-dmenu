@@ -24,6 +24,7 @@ import sys
 from time import sleep
 import uuid
 import subprocess
+import re
 
 # pylint: disable=import-error
 import gi
@@ -783,8 +784,10 @@ def show_wifi_password():
 
     """
     terminal = CONF.get("editor", "terminal", fallback="xterm")
-    subprocess.run([terminal, "-e", "nmcli", "device", "wifi", "show-password;",
-                    "exec", "bash"], check=False)
+    if re.match("(alacritty|kitty)",terminal):
+        subprocess.run([terminal, "--hold", "nmcli", "device", "wifi", "show-password"], check=False)
+    else:
+        subprocess.run([terminal, "-e", "nmcli", "device", "wifi", "show-password;","exec", "bash"], check=False)
 
 
 def get_passphrase():
